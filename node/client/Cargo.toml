@@ -32,6 +32,7 @@ sp-transaction-pool = { git = "https://github.com/paritytech/substrate", branch 
 sp-offchain = { package = "sp-offchain", git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-mmr-primitives = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+sp-statement-store = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 
 sc-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-executor = { git = "https://github.com/paritytech/substrate", branch = "master" }

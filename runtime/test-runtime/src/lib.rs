@@ -786,6 +786,15 @@ sp_api::impl_runtime_apis! {
 		}
 	}
 
+	impl sp_statement_store::runtime_api::ValidateStatement<Block> for Runtime {
+		fn validate_statement(
+			_source: sp_statement_store::runtime_api::StatementSource,
+			_statement: sp_statement_store::Statement,
+		) -> Result<sp_statement_store::runtime_api::ValidStatement, sp_statement_store::runtime_api::InvalidStatement> {
+			unimplemented!()
+		}
+	}
+
 	impl authority_discovery_primitives::AuthorityDiscoveryApi<Block> for Runtime {
 		fn authorities() -> Vec<AuthorityDiscoveryId> {
 			runtime_impl::relevant_authority_ids::<Runtime>()

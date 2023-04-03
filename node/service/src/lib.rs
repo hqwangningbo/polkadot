@@ -235,6 +235,9 @@ pub enum Error {
 	#[cfg(feature = "full-node")]
 	#[error("Expected at least one of polkadot, kusama, westend or rococo runtime feature")]
 	NoRuntime,
+
+	#[error(transparent)]
+	StatementStore(#[from] sc_statement_store::Error),
 }
 
 /// Can be called for a `Configuration` to identify which network the configuration targets.
@@ -598,6 +601,12 @@ where
 		}
 	};
 
+	let statement_store = sc_statement_store::Store::new_shared(
+		config.database.path().unwrap(),
+		client.clone(),
+		config.prometheus_registry(),
+	)?;
+
 	Ok(service::PartialComponents {
 		client,
 		backend,
@@ -606,6 +615,7 @@ where
 		select_chain,
 		import_queue,
 		transaction_pool,
+		statement_store: Some(statement_store),
 		other: (rpc_extensions_builder, import_setup, rpc_setup, slot_duration, telemetry),
 	})
 }
@@ -776,6 +786,7 @@ where
 		select_chain,
 		import_queue,
 		transaction_pool,
+		statement_store,
 		other: (rpc_extensions_builder, import_setup, rpc_setup, slot_duration, mut telemetry),
 	} = new_partial::<RuntimeApi, ExecutorDispatch, SelectRelayChain<_>>(
 		&mut config,
@@ -861,6 +872,7 @@ where
 			config: &config,
 			client: client.clone(),
 			transaction_pool: transaction_pool.clone(),
+			statement_store: statement_store.clone(),
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue,
 			block_announce_validator_builder: None,
@@ -925,6 +937,7 @@ where
 		keystore: keystore_container.keystore(),
 		network: network.clone(),
 		sync_service: sync_service.clone(),
+		statement_store,
 		rpc_builder: Box::new(rpc_extensions_builder),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
